@@ -1,65 +1,138 @@
-from openpyxl import load_workbook
-from PIL import Image, ImageDraw, ImageFont
-import os
+from jinja2 import Template
 
-folder_name = "GENERATEDIDs"
-if not os.path.exists(folder_name):
-    os.makedirs(folder_name)
+template_html = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ID Card</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+        }
 
-workbook = load_workbook('student_information.xlsx')
-sheet = workbook.active  
+        @page {
+            /* dimensions for the whole page */
+            size: 74mm 51.7mm;
+            margin: 0;
+        }
 
-for row in sheet.iter_rows(min_row=2): 
+        .top-section {
+            display: flex;
+            flex-direction: row;
+            }
 
-    id_card = Image.new('RGB', (800, 400), (255, 255, 255))
-    draw = ImageDraw.Draw(id_card)
+        .id-card {
 
-    logo = Image.open("logo.webp")  
-    logo = logo.resize((115,112))
-    id_card.paste(logo, (25, 0))
+            width: 800px;
+            height: 400px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            box-sizing: border-box;
+        }
 
-    institute_name = "Maharaja Surajmal Institute"
-    about = "(Affiliated to GGSIP University,Dwarka,Delhi)"
-    address = "C-4, Janakpuri, New Delhi-110058"
-    phone_number = "Tel. : 011-45656183, 011-45037193"
-    font_name = ImageFont.truetype('DejaVuSans', 35) 
-    font_info = ImageFont.truetype('DejaVuSans', 12)
-    draw.text((160, 10), institute_name, font=font_name, fill=(0,0,255))
-    draw.text((266, 50), about, font=font_info, fill=(0, 255, 0	))
-    draw.text((300, 65), address, font=font_info, fill=(255, 0, 0	))
-    draw.text((294, 80), phone_number, font=font_info, fill=(255, 0, 0	))
+        .logo {
+            flex = 1;
+            align-self: flex-start;
+            width: 115px;
+            height: 112px;
+            margin-right: 20px;
+        }
 
-    draw.line([(0,105), (800,105)], fill=(0, 255, 0	), width=2)
+        .College-block {
+            justify-content: center;
+        }
 
-    name = row[0].value
-    fathers_name = row[1].value
-    date_of_birth = row[2].value
-    cet_rank = row[3].value
-    phone_number = row[4].value
-    course_batch = row[5].value
-    photograph_path = './photos/'+row[6].value
-    digital_sign_path ='./sign/'+row[7].value
-    batch = row[9].value
-    address = row[8].value
 
-    photo = Image.open(photograph_path)
-    signature = Image.open(digital_sign_path)
+        .institute-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0000ff;
+        }
 
-    font = ImageFont.truetype('DejaVuSans', 20)  
-    draw.text((175, 125), f'Name: {name}', fill='black', font=font)
-    draw.text((175, 150), f'Father\'s Name: {fathers_name}', fill='black', font=font)
-    draw.text((175, 175), f'Date of Birth: {date_of_birth}', fill='black', font=font)
-    draw.text((550, 175), f'CET Rank: {cet_rank}', fill='black', font=font)
-    draw.text((175, 225), f'Phone Number: {phone_number}', fill='black', font=font)
-    draw.text((175, 200), f'Course: {course_batch}', fill='black', font=font)
-    draw.text((550, 200), f'Batch: {batch}', fill='black', font=font)
-    draw.text((175, 250), f'Res Address: {address}', fill='black', font=font)
+        .about {
+            font-size: 12px;
+            color: #00ff00;
+            margin-top: 5px;
+        }
 
-    photo = photo.resize((125, 120))
-    id_card.paste(photo, (25, 120))
+        .address {
+            font-size: 12px;
+            color: #ff0000;
+        }
 
-    signature = signature.resize((125, 50))
-    id_card.paste(signature,(25,250) )
+        .phone-number {
+            font-size: 12px;
+            color: #ff0000;
+            margin-top: 5px;
+        }
 
-    id_card.save(os.path.join(folder_name, f'{cet_rank}_id_card.jpg'))
-print('ID card generation complete!')
+        .line {
+            margin-top: 15px;
+            border-top: 2px solid #00ff00;
+        }
+
+        .info-block {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        .info {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        .photo {
+            width: 125px;
+            height: 120px;
+            margin-top: 10px;
+        }
+
+        .signature {
+            width: 125px;
+            height: 50px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="id-card">
+    <div class="top-section">
+        <img class="logo" src="{{ logo }}" alt="Logo">
+        <div class="College-block">
+            <div class="institute-name">{{ institute_name }}</div>
+            <div class="about">{{ about }}</div>
+            <div class="address">{{ address }}</div>
+            <div class="phone-number">{{ phone_number }}</div>
+        </div>
+    </div>
+        <div class="line"></div>
+    <div class="info-block">
+        <div class="personal-info">
+            <div class="name">Name: {{ name }}</div>
+            <div class="info">Father's Name: {{ father_name }}</div>
+            <div class="info">Date of Birth: {{ dob }}</div>
+            <div class="info">CET Rank: {{ cet_rank }}</div>
+            <div class="info">Phone Number: {{ phone }}</div>
+            <div class="info">Course: {{ course }}</div>
+            <div class="info">Batch: {{ batch }}</div>
+            <div class="info">Res Address: {{ address }}</div>
+
+        </div>
+        <img class="photo" src="{{ photo }}" alt="Photo">
+        <img class="signature" src="{{ signature }}" alt="Signature">
+    </div>
+    </div>
+</body>
+</html>
+"""
