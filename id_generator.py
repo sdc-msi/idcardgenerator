@@ -136,3 +136,21 @@ template_html = """
 </body>
 </html>
 """
+
+
+data = {
+    'logo': 'logo.jpg',
+    'institute_name': 'Maharaja Surajmal Institute',
+    'about': '(Affiliated to GGSIP University, Dwarka, Delhi)',
+    'address': 'C-4, Janakpuri, New Delhi-110058',
+    'phone_number': 'Tel. : 011-45656183, 011-45037193',
+    'name': 'John Doe',
+    'father_name': 'John Doe Sr.',
+    'dob': '01-01-2000',
+    'cet_rank': '1234',
+    'phone': '1234567890',
+    'course': 'Computer Science',
+    'batch': '2023',
+    'photo': 'photo.jpg',
+    'signature': 'signature.jpg'
+}
