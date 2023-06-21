@@ -154,3 +154,11 @@ data = {
     'photo': 'photo.jpg',
     'signature': 'signature.jpg'
 }
+
+
+
+template = Template(template_html)
+output_html = template.render(data)
+
+with open('id_card.html', 'w') as f:
+    f.write(output_html)
