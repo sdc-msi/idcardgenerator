@@ -1,4 +1,10 @@
 from jinja2 import Template
+import pandas as pd
+import os
+
+folder_name = "GENERATEDIDs"
+if not os.path.exists(folder_name):
+    os.makedirs(folder_name)
 
 template_html = """
 <!DOCTYPE html>
@@ -137,28 +143,34 @@ template_html = """
 </html>
 """
 
+ID_data=pd.read_excel("student_information.xlsx")
+last_val = ID_data.index[-1]
 
-data = {
-    'logo': 'logo.jpg',
+for index, row in ID_data.head(last_val).iterrows()    :
+    data = {
+    'logo': './logo.webp',
     'institute_name': 'Maharaja Surajmal Institute',
     'about': '(Affiliated to GGSIP University, Dwarka, Delhi)',
     'address': 'C-4, Janakpuri, New Delhi-110058',
     'phone_number': 'Tel. : 011-45656183, 011-45037193',
-    'name': 'John Doe',
-    'father_name': 'John Doe Sr.',
-    'dob': '01-01-2000',
-    'cet_rank': '1234',
-    'phone': '1234567890',
-    'course': 'Computer Science',
-    'batch': '2023',
-    'photo': 'photo.jpg',
-    'signature': 'signature.jpg'
+    'name': ID_data.iloc[index]['name'],
+    'father_name': ID_data.iloc[index]['father_name'],
+    'dob': ID_data.iloc[index]['date_of_birth'],
+    'cet_rank': ID_data.iloc[index]['cet_rank'],
+    'phone': ID_data.iloc[index]['phone_number'],
+    'course': ID_data.iloc[index]['course'],
+    'batch': ID_data.iloc[index]['batch'],
+    'photo': './photos/'+ID_data.iloc[index]['photograph'],
+    'signature': './sign/'+ID_data.iloc[index]['digital_sign']
 }
 
+    template = Template(template_html)
+    output_html = template.render(data)
 
 
-template = Template(template_html)
-output_html = template.render(data)
+    generated_file_path = os.path.join(folder_name, f'id_card{index}.html')
+    with open(generated_file_path, 'w') as f:
+        f.write(output_html)
 
-with open('id_card.html', 'w') as f:
-    f.write(output_html)
+
+
