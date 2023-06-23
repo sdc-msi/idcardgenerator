@@ -1,11 +1,11 @@
 from jinja2 import Template
 import pandas as pd
-import os
+import os, glob
 from html2image import Html2Image
 
 hti = Html2Image(output_path='GENERATEDIDs/')
 current_dir = os.getcwd()
-destination_folder = "GENERATEDIDs"
+destination_folder = f"{current_dir}/GENERATEDIDs"
 
 if not os.path.exists(destination_folder):
     os.makedirs(destination_folder)
@@ -209,35 +209,11 @@ while (x <= last_val-1):
      hti.screenshot(
     html_file=generated_file_path,
     save_as=f'id_card{x}.jpg',
-    size=(800, 400),
+    size=(700, 450),
 )
      x +=1
 
+unwanted_html = glob.glob(f'{destination_folder}/*.html')
+for file in unwanted_html:
+    os.remove(file)
 
-
-
-
-
-
-
-
-
-
-
-
-
-'''
-pdfoption = {
-
-    "enable-local-file-access": None,
-    'format': 'jpg',
-    }
-
-x = 0
-while (x <= last_val-1):
-     generated_file_path = os.path.join(destination_folder, f'id_card{x}.html')
-     print(generated_file_path)
-     generated_file_pdf = os.path.join(destination_folder, f'id_card{x}.jpg')
-     imgkit.from_file(generated_file_path, generated_file_pdf,  options=pdfoption)
-     x +=1
-'''
