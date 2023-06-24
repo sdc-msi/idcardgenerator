@@ -1,65 +1,74 @@
-from openpyxl import load_workbook
-from PIL import Image, ImageDraw, ImageFont
-import os
+from jinja2 import Template
+import pandas as pd
+import os, glob, sys
+from html2image import Html2Image
+import zipfile as zp
+from FORMAT import *
 
-folder_name = "GENERATEDIDs"
-if not os.path.exists(folder_name):
-    os.makedirs(folder_name)
 
-workbook = load_workbook('student_information.xlsx')
-sheet = workbook.active  
+current_dir = os.getcwd()
+photos_folder = glob.glob(f"{current_dir}/ID*/Photo*/")
+sign_folder = glob.glob(f"{current_dir}/ID*/Signature*/")
+destination_folder = f"{current_dir}/GENERATEDIDs"
+arg_name = sys.argv
 
-for row in sheet.iter_rows(min_row=2): 
+if len(arg_name) != 3:
+    print("Please provide the zip file and excel sheet")
+    exit()
 
-    id_card = Image.new('RGB', (800, 400), (255, 255, 255))
-    draw = ImageDraw.Draw(id_card)
 
-    logo = Image.open("logo.webp")  
-    logo = logo.resize((115,112))
-    id_card.paste(logo, (25, 0))
+zip_photos = f"{current_dir}/{arg_name[1]}"
+excel_sheet = f"{current_dir}/{arg_name[2]}"
 
-    institute_name = "Maharaja Surajmal Institute"
-    about = "(Affiliated to GGSIP University,Dwarka,Delhi)"
-    address = "C-4, Janakpuri, New Delhi-110058"
-    phone_number = "Tel. : 011-45656183, 011-45037193"
-    font_name = ImageFont.truetype('DejaVuSans', 35) 
-    font_info = ImageFont.truetype('DejaVuSans', 12)
-    draw.text((160, 10), institute_name, font=font_name, fill=(0,0,255))
-    draw.text((266, 50), about, font=font_info, fill=(0, 255, 0	))
-    draw.text((300, 65), address, font=font_info, fill=(255, 0, 0	))
-    draw.text((294, 80), phone_number, font=font_info, fill=(255, 0, 0	))
 
-    draw.line([(0,105), (800,105)], fill=(0, 255, 0	), width=2)
+if not os.path.exists(destination_folder):
+    os.makedirs(destination_folder)
 
-    name = row[0].value
-    fathers_name = row[1].value
-    date_of_birth = row[2].value
-    cet_rank = row[3].value
-    phone_number = row[4].value
-    course_batch = row[5].value
-    photograph_path = './photos/'+row[6].value
-    digital_sign_path ='./sign/'+row[7].value
-    batch = row[9].value
-    address = row[8].value
+hti = Html2Image(output_path='GENERATEDIDs/')
 
-    photo = Image.open(photograph_path)
-    signature = Image.open(digital_sign_path)
+with zp.ZipFile(zip_photos, "r") as zip_ref:
+    zip_ref.extractall()
 
-    font = ImageFont.truetype('DejaVuSans', 20)  
-    draw.text((175, 125), f'Name: {name}', fill='black', font=font)
-    draw.text((175, 150), f'Father\'s Name: {fathers_name}', fill='black', font=font)
-    draw.text((175, 175), f'Date of Birth: {date_of_birth}', fill='black', font=font)
-    draw.text((550, 175), f'CET Rank: {cet_rank}', fill='black', font=font)
-    draw.text((175, 225), f'Phone Number: {phone_number}', fill='black', font=font)
-    draw.text((175, 200), f'Course: {course_batch}', fill='black', font=font)
-    draw.text((550, 200), f'Batch: {batch}', fill='black', font=font)
-    draw.text((175, 250), f'Res Address: {address}', fill='black', font=font)
 
-    photo = photo.resize((125, 120))
-    id_card.paste(photo, (25, 120))
+ID_data=pd.read_excel(excel_sheet)
+last_val = ID_data.index[-1]
+print(current_dir)
 
-    signature = signature.resize((125, 50))
-    id_card.paste(signature,(25,250) )
+for index, row in ID_data.head(last_val).iterrows()    :
+    data = {
+    'logo': f'{current_dir}/logo.webp',
+    'name': ID_data.iloc[index]['Name'],
+    'father_name': ID_data.iloc[index]['Fathers Name'],
+    'dob': ID_data.iloc[index]['Date of birth'],
+    'cet_rank': ID_data.iloc[index]['CET RANK'],
+    'phone': ID_data.iloc[index]['Phone Number'],
+    'course': ID_data.iloc[index]['Course '],
+    'batch': ID_data.iloc[index]['Course '],
+    'photo': f'{photos_folder[0]}'+ID_data.iloc[index]['Photo'],
+    'signature': f'{sign_folder[0]}'+ID_data.iloc[index]['Signature'],
+    'personal_address': ID_data.iloc[index]['Permanent Address']
+}
 
-    id_card.save(os.path.join(folder_name, f'{cet_rank}_id_card.jpg'))
-print('ID card generation complete!')
+    template = Template(template_html)
+    output_html = template.render(data)
+
+
+    generated_file_path = os.path.join(destination_folder, f'id_card{index}.html')
+    with open(generated_file_path, 'w') as f:
+        f.write(output_html)
+
+
+x = 0
+while (x <= last_val-1):
+     generated_file_path = os.path.join(destination_folder, f'id_card{x}.html')
+     generated_file_pdf = os.path.join(destination_folder, f'id_card{x}.jpg')
+     hti.screenshot(
+    html_file=generated_file_path,
+    save_as=f'id_card{x}.jpg',
+    size=(700, 450),
+)
+     x +=1
+
+unwanted_html = glob.glob(f'{destination_folder}/*.html')
+for file in unwanted_html:
+    os.remove(file)
