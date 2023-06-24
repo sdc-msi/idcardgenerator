@@ -127,10 +127,10 @@ template_html = """
         <div class="top-block">
             <img class="college-logo" src="{{ logo }}" alt="Logo">
             <div class="college-info">
-                <div class="college-name">{{ college_name }}</div>
-                <div class="about">{{ about }}</div>
-                <div class="college-address">{{ college_address }}</div>
-                <div class="college-phone-number">{{ college_phone_number }}</div>
+                <div class="college-name">Maharaja Surajmal Institute</div>
+                <div class="about">(Affiliated to GGSIP University, Dwarka, Delhi)</div>
+                <div class="college-address">C-4, Janakpuri, New Delhi-110058</div>
+                <div class="college-phone-number">Tel. : 011-45656183, 011-45037193</div>
             </div>
         </div>
     <div class="line"></div>

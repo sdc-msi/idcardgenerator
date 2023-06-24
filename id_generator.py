@@ -2,38 +2,44 @@ from jinja2 import Template
 import pandas as pd
 import os, glob
 from html2image import Html2Image
+import zipfile as zp
 from FORMAT import *
 
-hti = Html2Image(output_path='GENERATEDIDs/')
+
 current_dir = os.getcwd()
+photos_folder = glob.glob(f"{current_dir}/ID*/Photo*/")
+sign_folder = glob.glob(f"{current_dir}/ID*/Signature*/")
 destination_folder = f"{current_dir}/GENERATEDIDs"
+
+zip_photos = glob.glob('*.zip')
+excel_sheet = glob.glob('*.xlsx')
 
 if not os.path.exists(destination_folder):
     os.makedirs(destination_folder)
 
+hti = Html2Image(output_path='GENERATEDIDs/')
+
+with zp.ZipFile(zip_photos[0], "r") as zip_ref:
+    zip_ref.extractall()
 
 
-ID_data=pd.read_excel("student_information.xlsx")
+ID_data=pd.read_excel(excel_sheet[0])
 last_val = ID_data.index[-1]
 print(current_dir)
 
 for index, row in ID_data.head(last_val).iterrows()    :
     data = {
     'logo': f'{current_dir}/logo.webp',
-    'college_name': 'Maharaja Surajmal Institute',
-    'about': '(Affiliated to GGSIP University, Dwarka, Delhi)',
-    'college_address': 'C-4, Janakpuri, New Delhi-110058',
-    'college_phone_number': 'Tel. : 011-45656183, 011-45037193',
-    'name': ID_data.iloc[index]['name'],
-    'father_name': ID_data.iloc[index]['father_name'],
-    'dob': ID_data.iloc[index]['date_of_birth'],
-    'cet_rank': ID_data.iloc[index]['cet_rank'],
-    'phone': ID_data.iloc[index]['phone_number'],
-    'course': ID_data.iloc[index]['course'],
-    'batch': ID_data.iloc[index]['batch'],
-    'photo': f'{current_dir}/photos/'+ID_data.iloc[index]['photograph'],
-    'signature': f'{current_dir}/sign/'+ID_data.iloc[index]['digital_sign'],
-    'personal_address': ID_data.iloc[index]['address']
+    'name': ID_data.iloc[index]['Name'],
+    'father_name': ID_data.iloc[index]['Fathers Name'],
+    'dob': ID_data.iloc[index]['Date of birth'],
+    'cet_rank': ID_data.iloc[index]['CET RANK'],
+    'phone': ID_data.iloc[index]['Phone Number'],
+    'course': ID_data.iloc[index]['Course '],
+    'batch': ID_data.iloc[index]['Course '],
+    'photo': f'{photos_folder[0]}'+ID_data.iloc[index]['Photo'],
+    'signature': f'{sign_folder[0]}'+ID_data.iloc[index]['Signature'],
+    'personal_address': ID_data.iloc[index]['Permanent Address']
 }
 
     template = Template(template_html)
@@ -59,4 +65,3 @@ while (x <= last_val-1):
 unwanted_html = glob.glob(f'{destination_folder}/*.html')
 for file in unwanted_html:
     os.remove(file)
-
