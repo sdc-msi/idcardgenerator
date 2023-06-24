@@ -1,6 +1,6 @@
 from jinja2 import Template
 import pandas as pd
-import os, glob
+import os, glob, sys
 from html2image import Html2Image
 import zipfile as zp
 from FORMAT import *
@@ -10,20 +10,27 @@ current_dir = os.getcwd()
 photos_folder = glob.glob(f"{current_dir}/ID*/Photo*/")
 sign_folder = glob.glob(f"{current_dir}/ID*/Signature*/")
 destination_folder = f"{current_dir}/GENERATEDIDs"
+arg_name = sys.argv
 
-zip_photos = glob.glob('*.zip')
-excel_sheet = glob.glob('*.xlsx')
+if len(arg_name) != 3:
+    print("Please provide the zip file and excel sheet")
+    exit()
+
+
+zip_photos = f"{current_dir}/{arg_name[1]}"
+excel_sheet = f"{current_dir}/{arg_name[2]}"
+
 
 if not os.path.exists(destination_folder):
     os.makedirs(destination_folder)
 
 hti = Html2Image(output_path='GENERATEDIDs/')
 
-with zp.ZipFile(zip_photos[0], "r") as zip_ref:
+with zp.ZipFile(zip_photos, "r") as zip_ref:
     zip_ref.extractall()
 
 
-ID_data=pd.read_excel(excel_sheet[0])
+ID_data=pd.read_excel(excel_sheet)
 last_val = ID_data.index[-1]
 print(current_dir)
 
