@@ -1,2 +1,7 @@
 /GENERATEDIDs
 /__pycache__
+/unzip_photos
+/unzip_sign
+*.xlsx
+*.zip
+
