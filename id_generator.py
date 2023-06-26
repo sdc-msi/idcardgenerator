@@ -5,29 +5,32 @@ from html2image import Html2Image
 import zipfile as zp
 from FORMAT import *
 
-
+hti = Html2Image(output_path='GENERATEDIDs/')
 current_dir = os.getcwd()
-photos_folder = glob.glob(f"{current_dir}/ID*/Photo*/")
-sign_folder = glob.glob(f"{current_dir}/ID*/Signature*/")
-destination_folder = f"{current_dir}/GENERATEDIDs"
+
 arg_name = sys.argv
 
-if len(arg_name) != 3:
+if len(arg_name) != 4:
     print("Please provide the zip file and excel sheet")
     exit()
 
-
 zip_photos = f"{current_dir}/{arg_name[1]}"
-excel_sheet = f"{current_dir}/{arg_name[2]}"
+zip_signatures = f"{current_dir}/{arg_name[2]}"
+excel_sheet = f"{current_dir}/{arg_name[3]}"
 
-
+destination_folder = f"{current_dir}/GENERATEDIDs"
 if not os.path.exists(destination_folder):
     os.makedirs(destination_folder)
 
-hti = Html2Image(output_path='GENERATEDIDs/')
+with zp.ZipFile(zip_photos, "r") as zip1:
+    zip1.extractall("unzip_photos")
 
-with zp.ZipFile(zip_photos, "r") as zip_ref:
-    zip_ref.extractall()
+with zp.ZipFile(zip_signatures, "r") as zip2:
+    zip2.extractall("unzip_sign")
+
+
+photos_folder = glob.glob(f"{current_dir}/unzip_photos/*/")
+sign_folder = glob.glob(f"{current_dir}/unzip_sign/*/")
 
 
 ID_data=pd.read_excel(excel_sheet)
