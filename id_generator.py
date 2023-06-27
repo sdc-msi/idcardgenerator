@@ -1,6 +1,6 @@
 from jinja2 import Template
 import pandas as pd
-import os, glob, sys
+import os, glob, sys, re
 from html2image import Html2Image
 import zipfile as zp
 from FORMAT import *
@@ -12,7 +12,7 @@ arg_name = sys.argv
 
 if len(arg_name) != 4:
     print("Please provide the zip file and excel sheet")
-    exit()
+    sys.exit()
 
 zip_photos = f"{current_dir}/{arg_name[1]}"
 zip_signatures = f"{current_dir}/{arg_name[2]}"
@@ -37,11 +37,22 @@ ID_data=pd.read_excel(excel_sheet)
 last_val = ID_data.index[-1]
 print(current_dir)
 
+name_pattern = r'[Nn]ame'
+father_name_pattern = r'[Ff]ather*'
+
+for columns_header in ID_data.columns:
+    if re.match(name_pattern, col):
+        name = columns_header
+    if re.match(father_name_pattern, col):
+        father_name = columns_header
+
+
 for index, row in ID_data.head(last_val).iterrows()    :
+
     data = {
     'logo': f'{current_dir}/logo.webp',
-    'name': ID_data.iloc[index]['Name'],
-    'father_name': ID_data.iloc[index]['Fathers Name'],
+    'name': ID_data.iloc[index][name],
+    'father_name': ID_data.iloc[index][father_name],
     'dob': ID_data.iloc[index]['Date of birth'],
     'cet_rank': ID_data.iloc[index]['CET RANK'],
     'phone': ID_data.iloc[index]['Phone Number'],
