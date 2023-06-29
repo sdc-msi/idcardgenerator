@@ -18,7 +18,7 @@ To use this project proceed with the following steps:
 
 4. Install requirements `pip3 install pandas openpyxl html2image jinja2`
 
-5. Run `python id_generator.py photos.zip and excel.xlsx` name both the file
+5. Run `python id_generator.py photos.zip signature.zip excel.xlsx` name both the file
    accordingly to your need.
 
 __NOTE:__ Google Chrome (Windows) / Chromium (Linux) is required for this project.
@@ -26,3 +26,10 @@ __NOTE:__ Google Chrome (Windows) / Chromium (Linux) is required for this projec
 ## Google forms required fields and naming schema
 
 TODO
+
+## Release Info
+
+Currently, Standalone executable are available for windows and linux. Just pass
+the args into the commandline using terminal. Tested to work on Windows 10 and
+arch linux.
+
