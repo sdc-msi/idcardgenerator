@@ -3,9 +3,12 @@ import pandas as pd
 import os, glob, sys, re
 from html2image import Html2Image
 import zipfile as zp
+import barcode
+from barcode.writer import ImageWriter
 from FORMAT import *
 
 hti = Html2Image(output_path='GENERATEDIDs/')
+barcode_format = barcode.get_barcode_class('code128')
 current_dir = os.getcwd()
 
 arg_name = sys.argv
@@ -59,6 +62,15 @@ for key, pattern in column_patterns.items():
 
 for index, row in ID_data.head(last_val).iterrows():
     for key, pattern in column_patterns.items():
+
+        # Barcode generation
+        rank_val = ID_data.iloc[index][column_patterns['rank']].astype(int)
+        batch_val = ID_data.iloc[index][column_patterns['batch']].astype(int)
+        barval = f'{rank_val}{batch_val}'
+        my_barcode = barcode_format(barval, writer=ImageWriter())
+        my_barcode.save("generated_barcode")
+
+
         data = {
         'logo': f'{current_dir}/logo.webp',
         'name': ID_data.iloc[index][column_patterns['name']],
@@ -72,6 +84,7 @@ for index, row in ID_data.head(last_val).iterrows():
         'signature': f'{sign_folder[0]}'+ID_data.iloc[index][column_patterns['signature']],
         'personal_address': ID_data.iloc[index][column_patterns['address']]
     }
+
 
 
     template = Template(template_html)
