@@ -4,7 +4,7 @@ import os, glob, sys, re
 from html2image import Html2Image
 import zipfile as zp
 import barcode
-from barcode.writer import ImageWriter
+from barcode.writer import SVGWriter
 from FORMAT import *
 
 hti = Html2Image(output_path='GENERATEDIDs/')
@@ -67,7 +67,7 @@ for index, row in ID_data.head(last_val).iterrows():
         rank_val = ID_data.iloc[index][column_patterns['rank']].astype(int)
         batch_val = ID_data.iloc[index][column_patterns['batch']].astype(int)
         barval = f'{rank_val}{batch_val}'
-        my_barcode = barcode_format(barval, writer=ImageWriter())
+        my_barcode = barcode_format(barval, writer=SVGWriter())
         my_barcode.save(os.path.join(destination_folder, f'id_card{index}'))
 
 
@@ -82,7 +82,8 @@ for index, row in ID_data.head(last_val).iterrows():
         'batch': ID_data.iloc[index][column_patterns['batch']],
         'photo': f'{photos_folder[0]}'+ID_data.iloc[index][column_patterns['photo']],
         'signature': f'{sign_folder[0]}'+ID_data.iloc[index][column_patterns['signature']],
-        'personal_address': ID_data.iloc[index][column_patterns['address']]
+        'personal_address': ID_data.iloc[index][column_patterns['address']],
+        'barcode': f'{current_dir}/GENERATEDIDs/id_card{index}.svg'
     }
 
 
