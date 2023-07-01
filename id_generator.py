@@ -68,7 +68,7 @@ for index, row in ID_data.head(last_val).iterrows():
         batch_val = ID_data.iloc[index][column_patterns['batch']].astype(int)
         barval = f'{rank_val}{batch_val}'
         my_barcode = barcode_format(barval, writer=ImageWriter())
-        my_barcode.save("generated_barcode")
+        my_barcode.save(os.path.join(destination_folder, f'id_card{index}'))
 
 
         data = {
