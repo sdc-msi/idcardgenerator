@@ -8,7 +8,7 @@ from barcode.writer import SVGWriter
 from FORMAT import *
 
 hti = Html2Image(output_path='GENERATEDIDs/')
-barcode_format = barcode.get_barcode_class('code128')
+barcode_format = barcode.get_barcode_class('gs1_128')
 current_dir = os.getcwd()
 
 arg_name = sys.argv
@@ -68,7 +68,7 @@ for index, row in ID_data.head(last_val).iterrows():
         batch_val = ID_data.iloc[index][column_patterns['batch']].astype(int)
         barval = f'{rank_val}{batch_val}'
         my_barcode = barcode_format(barval, writer=SVGWriter())
-        my_barcode.save(os.path.join(destination_folder, f'id_card{index}'))
+        my_barcode.save(os.path.join(destination_folder, f'id_card{index}'), {'module_height':18.0, 'module_width':0.5})
 
 
         data = {
