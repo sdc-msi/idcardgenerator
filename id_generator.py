@@ -67,6 +67,7 @@ for index, row in ID_data.head(last_val).iterrows():
         rank_val = ID_data.iloc[index][column_patterns['rank']].astype(int)
         batch_val = ID_data.iloc[index][column_patterns['batch']].astype(int)
         barval = f'{rank_val}{batch_val}'
+        barval = barval.zfill(10)
         my_barcode = barcode_format(barval, writer=SVGWriter())
         my_barcode.save(os.path.join(destination_folder, f'id_card{index}'), {'module_height':18.0, 'module_width':0.5})
 
