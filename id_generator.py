@@ -75,7 +75,7 @@ for index, row in ID_data.head(last_val).iterrows():
         'logo': f'{current_dir}/logo.webp',
         'name': ID_data.iloc[index][column_patterns['name']],
         'father_name': ID_data.iloc[index][column_patterns['father_name']],
-        'dob': ID_data.iloc[index][column_patterns['dob']],
+        'dob': ID_data.iloc[index][column_patterns['dob']].strftime('%d-%m-%Y'),
         'cet_rank': ID_data.iloc[index][column_patterns['rank']],
         'phone': ID_data.iloc[index][column_patterns['number']],
         'course': ID_data.iloc[index][column_patterns['course']],
