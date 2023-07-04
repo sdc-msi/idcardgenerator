@@ -23,7 +23,7 @@ template_html = """
             background-color: white;
             border: 1px solid #ccc;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 5px;
             box-sizing: border-box;
         }
 
@@ -72,20 +72,34 @@ template_html = """
 /* This Section is for personal information */
 
         .bottom-block {
-            text-align: left`;
+            text-align: left;
             display: flex;
         }
 
         .personal-info {
             width: 60%;
-            float: right;
+            float: left;
         }
 
         .personal-photo {
-            width: 40%;
+            width: 25%;
             float: right;
             }
 
+        .barcode-area {
+            width: 15%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .barcode {
+            transform: rotate(270deg);
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+        }
 
         .name {
             font-size: 20px;
@@ -115,7 +129,7 @@ template_html = """
 
 
         .line {
-            margin-top: 15px;
+            margin-top: 5px;
             border-top: 2px solid #00ff00;
         }
 
@@ -150,6 +164,9 @@ template_html = """
                 <div class="info">Course: {{ course }}</div>
                 <div class="info">Batch: {{ batch }}</div>
                 <div class="info">Res Address: {{ personal_address }}</div>
+            </div>
+            <div class="barcode-area">
+                <img class="barcode" src="{{ barcode }}" alt="Barcode">
             </div>
 
         </div>
