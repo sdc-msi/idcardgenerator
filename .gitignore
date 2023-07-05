@@ -2,6 +2,9 @@
 /__pycache__
 /unzip_photos
 /unzip_sign
+/build
+/dist
+*.spec
 *.xlsx
 *.zip
 
