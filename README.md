@@ -16,7 +16,7 @@ To use this project proceed with the following steps:
 3. Download the photos as a zip from google drive. Dont download them
    separately.
 
-4. Install requirements `pip3 install pandas openpyxl html2image jinja2`
+4. Install requirements `pip3 install pandas openpyxl html2image jinja2 python-barcode`
 
 5. Run `python id_generator.py photos.zip signature.zip excel.xlsx` name both the file
    accordingly to your need.
